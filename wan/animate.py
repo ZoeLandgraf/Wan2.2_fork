@@ -9,6 +9,7 @@ from functools import partial
 from einops import rearrange
 import numpy as np
 import torch
+from PIL import Image # type: ignore
 
 import torch.distributed as dist
 from peft import set_peft_model_state_dict
@@ -277,7 +278,15 @@ class WanAnimate:
         face_idxs = list(range(face_len))
         face_images = face_video_reader.get_batch(face_idxs).asnumpy()
         height, width = cond_images[0].shape[:2]
-        refer_images = cv2.imread(src_ref_path)[..., ::-1]
+        try:
+           refer_images = cv2.imread(src_ref_path)[..., ::-1]
+        except: 
+            # Load the image with PIL
+            img = Image.open(src_ref_path)  # Replace with your image path
+            # Optionally, convert to a specific mode (e.g., "RGBA" or "RGB")
+            img = img.convert("RGB")  # Use "RGB" if you don't need alpha
+            # Convert to a NumPy array
+            refer_images = np.array(img)
         refer_images = self.padding_resize(refer_images, height=height, width=width)
         return cond_images, face_images, refer_images
     
