@@ -124,6 +124,7 @@ class ProcessPipeline():
             mpy.ImageSequenceClip(aug_masks_new, fps=fps).write_videofile(src_mask_path)
             return True
         else:
+            import pdb;pdb.set_trace()
             logger.info(f"Processing reference image: {refer_image_path}")
             refer_img = cv2.imread(refer_image_path)
             src_ref_path = os.path.join(output_path, 'src_ref.png')
